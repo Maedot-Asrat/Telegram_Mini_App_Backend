@@ -29,7 +29,13 @@ mongoose.connect(process.env.MONGO_URI, {
   
 
 const User = mongoose.model('User', userSchema);
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
+bot.setWebHook(`${process.env.VITE_APP_URL}/bot${process.env.TELEGRAM_BOT_TOKEN}`);
 
+app.post(`/bot${process.env.TELEGRAM_BOT_TOKEN}`, (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
 // const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
 
 // Handle /start command
@@ -109,13 +115,7 @@ app.post('/api/update-points', async (req, res) => {
     res.status(400).json({ message: 'Invalid token' });
   }
 });
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
-bot.setWebHook(`${process.env.VITE_APP_URL}/bot${process.env.TELEGRAM_BOT_TOKEN}`);
 
-app.post(`/bot${process.env.TELEGRAM_BOT_TOKEN}`, (req, res) => {
-  bot.processUpdate(req.body);
-  res.sendStatus(200);
-});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
