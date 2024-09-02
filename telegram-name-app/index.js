@@ -9,8 +9,13 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
 
+// CORS Configuration
+app.use(cors({
+  origin: process.env.FRONTEND_URL, // Allow only your frontend's origin
+  methods: ['GET', 'POST'],
+}));
+
 app.use(bodyParser.json());
-app.use(cors());
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -49,7 +54,7 @@ bot.onText(/\/start/, async (msg) => {
         [
           {
             text: "Open Hamster Maddy App",
-            url: `${process.env.VITE_APP_URL}/api/user/${token}`
+            url: `${process.env.FRONTEND_URL}/?token=${token}` // Updated URL
           }
         ]
       ]
@@ -72,6 +77,7 @@ app.get('/api/user/:token', async (req, res) => {
 
     res.json({ name: user.name, points: user.points });
   } catch (err) {
+    console.error('JWT Verification Error:', err);
     res.status(400).json({ message: 'Invalid token' });
   }
 });
@@ -92,6 +98,7 @@ app.post('/api/update-points', async (req, res) => {
 
     res.json({ points: user.points });
   } catch (err) {
+    console.error('JWT Verification Error:', err);
     res.status(400).json({ message: 'Invalid token' });
   }
 });
