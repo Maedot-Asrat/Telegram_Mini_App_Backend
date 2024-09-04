@@ -54,7 +54,7 @@ bot.onText(/\/start/, async (msg) => {
         [
           {
             text: "Open Hamster Maddy App",
-            url: `${process.env.FRONTEND_URL}/?token=${token}` // Updated URL
+            url: `${process.env.FRONTEND_URL}/api/user/${token}` // Updated URL
           }
         ]
       ]
